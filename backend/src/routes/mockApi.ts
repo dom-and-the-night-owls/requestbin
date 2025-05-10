@@ -5,8 +5,9 @@ const router = express.Router();
 
 let baskets: string[] = ["78ugqjy", "x06skz4", "5ce2eoa"];
 
-const requests: Omit<RequestType, "basketName">[]= [
+let requests: RequestType[] = [
   {
+    basketName: '78ugqjy',
     method: "POST",
     sentAt: "2025-05-08T05:45:50.361+10:00",
     headers: `
@@ -113,6 +114,7 @@ const requests: Omit<RequestType, "basketName">[]= [
     `
   },
   {
+    basketName: 'x06skz4',
     method: "POST",
     sentAt: "2025-03-10T06:50:30.361+10:00",
     headers: `
@@ -286,6 +288,7 @@ const requests: Omit<RequestType, "basketName">[]= [
     `
   },
   {
+    basketName: '5ce2eoa',
     method: "POST",
     sentAt: "2025-03-10T06:50:30.361+10:00",
     headers: `
@@ -359,5 +362,18 @@ router.delete('/baskets/:name/requests', (req: Request<{ name: string }>, res: R
 
   res.status(200).json();
 });
+
+router.get('/baskets/:name/purge', (req: Request, res: Response) => {
+  const { name }  = req.params
+  
+  if (!baskets.includes(name)) {
+    res.status(404).json({ message: "Basket not found"});
+    return;
+  }
+
+  requests = requests.filter(requestObj => requestObj.basketName !== name);
+
+  res.send(200).send();
+})
 
 export default router;
