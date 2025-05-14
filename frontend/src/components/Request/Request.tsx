@@ -1,16 +1,14 @@
 import type { Request as RequestProps } from "../../types";
 import StyledJSONTree from "../StyledJSONTree";
 import { useState } from "react";
-import {
-  Box,
-  Stack,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-  Switch,
-  Tooltip,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import Switch from "@mui/material/Switch";
+import Tooltip from "@mui/material/Tooltip";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const Request = ({

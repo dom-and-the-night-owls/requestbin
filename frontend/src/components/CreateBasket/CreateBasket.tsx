@@ -3,14 +3,12 @@ import type { ChangeEvent } from "react";
 import { useNavigate } from "react-router";
 import apiService from "../../services/requestBinAPI";
 import { handleAPIError } from "../../utils";
-import {
-  Paper,
-  Typography,
-  Stack,
-  TextField,
-  Button,
-  InputAdornment,
-} from "@mui/material";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
 
 interface CreateBasketProps {
   setBaskets: React.Dispatch<React.SetStateAction<Array<string>>>;

@@ -1,4 +1,5 @@
-import { Fab, Tooltip } from "@mui/material";
+import Fab from "@mui/material/Fab";
+import Tooltip from "@mui/material/Tooltip";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 
 interface MyBasketsFabProps {

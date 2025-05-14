@@ -1,7 +1,8 @@
 import type { Request as RequestType } from "../../types";
 import Request from "../../components/Request";
 import EmptyBasketContent from "../EmptyBasketContent";
-import { List, ListItem } from "@mui/material";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
 
 interface RequestListProps {
   basketName: string;

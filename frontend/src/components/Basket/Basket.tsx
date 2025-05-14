@@ -4,15 +4,13 @@ import type { Request as RequestType } from "../../types";
 import apiService from "../../services/requestBinAPI";
 import { handleAPIError } from "../../utils";
 import RequestList from "../RequestList";
-import {
-  Button,
-  Paper,
-  Container,
-  Stack,
-  Divider,
-  Typography,
-  Tooltip,
-} from "@mui/material";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
+import Tooltip from "@mui/material/Tooltip";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DialogComponent from "./../Dialog/Dialog";

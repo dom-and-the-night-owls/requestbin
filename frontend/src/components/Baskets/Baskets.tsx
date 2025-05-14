@@ -1,28 +1,20 @@
 import { Link } from "react-router";
-import {
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-  Drawer,
-  Stack,
-} from "@mui/material";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Typography from "@mui/material/Typography";
+import Drawer from "@mui/material/Drawer";
+import Stack from "@mui/material/Stack";
 import ArchiveIcon from "@mui/icons-material/Archive";
 
 interface BasketsProps {
   baskets: Array<string>;
   drawerState: boolean;
   setDrawerState: React.Dispatch<React.SetStateAction<boolean>>;
-  snackbarMessage: boolean;
 }
 
-const Baskets = ({
-  baskets,
-  drawerState,
-  setDrawerState,
-  snackbarMessage,
-}: BasketsProps) => {
+const Baskets = ({ baskets, drawerState, setDrawerState }: BasketsProps) => {
   return (
     <Drawer
       anchor="right"
