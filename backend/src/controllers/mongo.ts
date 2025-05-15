@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 import { IMongoClient, RequestBody } from "../types";
 
 class MongoClient implements IMongoClient {
-  private dbName: string;
+  private uri: string;
   private requestBodyModel: mongoose.Model<RequestBody>;
 
-  constructor(dbName: string = "requestBodies") {
-    this.dbName = dbName;
+  constructor(uri?: string) {
+    this.uri = uri || `${process.env.MONGO_URI}/requestBodies`;
 
     const schema = new mongoose.Schema<RequestBody>({
       request: mongoose.Schema.Types.String,
@@ -41,7 +41,7 @@ class MongoClient implements IMongoClient {
   public async connectToDatabase(): Promise<void> {
     try {
       if (mongoose.connection.readyState !== 1) {
-        await mongoose.connect(`${process.env.MONGODB_URI}/${this.dbName}`);
+        await mongoose.connect(this.uri);
         console.log("Connected to MongoDB");
       }
     } catch (error: any) {

@@ -1,4 +1,5 @@
 import mongoose, { Document } from "mongoose";
+import { PoolClient } from "pg";
 
 export interface MockRequest {
   basketName: string;
@@ -36,6 +37,8 @@ export interface PostgresRequestRow {
 }
 
 export interface IPostgresClient {
+  connect(): Promise<PoolClient>;
+  disconnect(): Promise<void>;
   getBaskets(): Promise<any[]>;
   getBasketName(name: string): Promise<string | null>;
   getToken(tokenValue: string): Promise<any>;
@@ -51,8 +54,10 @@ export interface IPostgresClient {
 }
 
 export interface IMongoClient {
+  connectToDatabase(): Promise<void>;
   getModel(): mongoose.Model<RequestBody>;
+  saveRequestBody(requestBody: any): Promise<string>;
   getRequestBody(bodyMongoId: string): Promise<any>;
   deleteBodyRequests(ids: string[]): Promise<boolean>;
-  saveRequestBody(requestBody: any): Promise<string>
+  closeConnection(): Promise<void>;
 }

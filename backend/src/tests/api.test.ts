@@ -1,42 +1,28 @@
-// import { Express } from "express";
-// import request from "supertest";
-// import { createApp } from "../main";
+// // import { Express } from "express";
+// // import request from "supertest";
+// // import { createApp } from "../main";
 // import { MongoMemoryServer } from "mongodb-memory-server";
 // import mongoose from "mongoose";
-// import { newDb } from "pg-mem";
+// // import { newDb } from "pg-mem";
+// // import PostgresClient from "../controllers/postgresql";
+// import MongoClient from "../controllers/mongo";
 
-
-// // Dummy wrappers for consistency
-// class TestPostgresClient {
-//   // mock or use real implementation with pg-mem here
-//   constructor(public db: any) {}
-// }
-
-// class TestMongoClient {
-//   constructor(public uri: string) {}
-//   async connectToDatabase() {
-//     await mongoose.connect(this.uri);
-//   }
-// }
-
-// describe("API tests", () => {
+// describe("API tests with in-memory Mongo and Postgres", () => {
 //   let mongoServer: MongoMemoryServer;
-//   let pgMem;
-//   let app: Express;
+//   // let app: Express;
 
 //   beforeAll(async () => {
-//     // In-memory Mongo
 //     mongoServer = await MongoMemoryServer.create();
-//     const mongoUri = mongoServer.getUri();
-//     const mongoClient = new TestMongoClient(mongoUri);
+//     const mongoUri = `${mongoServer.getUri()}/testRequestBodies`;
+//     const mongoClient = new MongoClient(mongoUri);
 //     await mongoClient.connectToDatabase();
 
-//     // In-memory Postgres
-//     pgMem = newDb();
-//     const pg = new TestPostgresClient(pgMem);
+//     // const pgMem = newDb();
+//     // Use pgMem to set up schema and mock PostgresClient
+//     // const pgClient = setupPgClient(pgMem); // We'll define this below
 
-//     // Inject into app
-//     app = createApp(pg, mongoClient);
+//     // Create app with in-memory DBs
+//     // app = createApp(pgClient, mongoClient);
 //   });
 
 //   afterAll(async () => {
@@ -45,8 +31,6 @@
 //   });
 
 //   test("GET /ping returns pong", async () => {
-//     const res = await request(app).get("/ping");
-//     expect(res.statusCode).toBe(200);
-//     expect(res.text).toBe("pong");
+
 //   });
 // });
