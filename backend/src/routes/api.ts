@@ -26,7 +26,7 @@ export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
     const basketName = req.query.name;
 
     if (typeof basketName !== "string") {
-      res.status(422).send("Missing basket name");
+      res.status(404).send("Missing basket name");
       return;
     } else if (!(await pg.doesBasketExist(basketName))) {
       res.status(404).send("Basket does not exist");
