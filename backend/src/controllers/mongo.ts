@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { RequestBody } from "../types";
+import { IMongoClient, RequestBody } from "../types";
 
-class MongoClient {
+class MongoClient implements IMongoClient {
   private dbName: string;
   private requestBodyModel: mongoose.Model<RequestBody>;
 

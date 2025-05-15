@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "tsc": "tsc",
-    "dev": "ts-node-dev ./src/main.ts",
-    "start": "node build/main.js",
+    "dev": "NODE_ENV=development ts-node-dev ./src/main.ts",
+    "test": "NODE_ENV=test jest --runInBand --detectOpenHandles",
+    "start": "NODE_ENV=production node build/main.js",
     "db-init": "createdb requestbin && psql -d requestbin < schema.sql",
-    "mock": "USE_MOCK_API=true ts-node-dev ./src/main.ts",
+    "mock": "NODE_ENV=mock ts-node-dev ./src/main.ts",
     "build:backend": "npm install && npm run tsc",
     "build:frontend": "rm -rf dist && cd ../frontend && npm install && npm run build && cp -r dist ../backend",
     "build:full": "npm run db-init && npm run build:backend && npm run build:frontend"

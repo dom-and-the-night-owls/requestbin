@@ -1,10 +1,8 @@
 import express, { Request, Response } from "express";
 import { headersToString } from "../utils";
-import { Request as RequestType } from "../types";
-import MongoClient from "../controllers/mongo";
-import PostgresClient from "../controllers/postgresql";
+import { IMongoClient, IPostgresClient, Request as RequestType } from "../types";
 
-export default function hookRouter(pg: PostgresClient, mongo: MongoClient) {
+export default function hookRouter(pg: IPostgresClient, mongo: IMongoClient) {
   const router = express.Router();
 
   router.all("/:name", async (req: Request<{ name: string }>, res: Response) => {

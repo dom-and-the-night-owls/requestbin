@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export interface MockRequest {
   basketName: string;
@@ -33,4 +33,26 @@ export interface PostgresRequestRow {
   method: string;
   headers: string;
   body_mongo_id: string;
+}
+
+export interface IPostgresClient {
+  getBaskets(): Promise<any[]>;
+  getBasketName(name: string): Promise<string | null>;
+  getToken(tokenValue: string): Promise<any>;
+  doesBasketExist(name: string): Promise<boolean>;
+  storeToken(token: string, basketName: string): Promise<any>;
+  addNewBasket(basketName: string): Promise<void>;
+  saveRequest(request: any): Promise<any>;
+  getBasketRequestBodyIds(basketName: string): Promise<string[]>;
+  deleteBasketRequests(basketName: string): Promise<boolean>;
+  deleteBasket(basketName: string): Promise<boolean>;
+  fetchBasketContents(basketName: string): Promise<any[]>;
+  getValidBaskets(basketNames: string[]): Promise<string[]>;
+}
+
+export interface IMongoClient {
+  getModel(): mongoose.Model<RequestBody>;
+  getRequestBody(bodyMongoId: string): Promise<any>;
+  deleteBodyRequests(ids: string[]): Promise<boolean>;
+  saveRequestBody(requestBody: any): Promise<string>
 }

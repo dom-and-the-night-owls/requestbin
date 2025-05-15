@@ -1,9 +1,8 @@
 import express, { Request, Response } from "express";
 import { generateRandomString, generateToken } from "../utils";
-import PostgresClient from "../controllers/postgresql";
-import MongoClient from "../controllers/mongo";
+import { IMongoClient, IPostgresClient } from "../types";
 
-export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
+export default function basketRouter(pg: IPostgresClient, mongo: IMongoClient) {
   const router = express.Router();
 
   router.get("/baskets", async (_req: Request, res: Response) => {
