@@ -61,10 +61,16 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     await mongoServer.stop();
   });
 
-  test("GET /api/ping returns pong", async () => {
-    const res = await request(app).get("/api/ping");
-    console.log(res.statusCode);
+  test("GET /ping returns pong", async () => {
+    const res = await request(app).get("/ping");
     expect(res.statusCode).toBe(200);
     expect(res.text).toBe("pong");
   });
+
+  // test("GET /api/baskets returns json response", async () => {
+  //   await request(app)
+  //   .get("/api/baskets")
+  //   .expect(200)
+  //   .expect("Content-Type", /application\/json/);
+  // });
 });
