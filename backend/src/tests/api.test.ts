@@ -61,17 +61,25 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     await mongoServer.stop();
   });
 
-  test("GET /ping returns pong", async () => {
+  test("GET /ping", async () => {
     const res = await request(app).get("/ping");
     expect(res.statusCode).toBe(200);
     expect(res.text).toBe("pong");
   });
 
-  test("GET /api/baskets returns json response", async () => {
+  test("GET /api/baskets", async () => {
     await request(app)
       .get("/api/baskets")
       .expect(200)
       .expect("Content-Type", /application\/json/)
       .expect({ basketNames: [] });
+  });
+
+  test("GET /api/baskets/generate_name", async () => {
+    const res = await request(app).get("/api/baskets/generate_name");
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("basketName");
+    expect(typeof res.body.basketName).toBe("string");
+    expect(res.body.basketName.length).toBe(7);
   });
 });
