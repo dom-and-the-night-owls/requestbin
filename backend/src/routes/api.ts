@@ -41,12 +41,12 @@ export default function basketRouter(pg: IPostgresClient, mongo: IMongoClient) {
     const basketName = req.params.name;
 
     if (await pg.doesBasketExist(basketName)) {
-      res.status(409).json("Basket name taken");
+      res.status(409).send("Basket name taken");
       return;
     }
 
     await pg.addNewBasket(basketName);
-    res.status(200).send({ basketName });
+    res.status(200).json({ basketName });
   });
 
   router.delete(

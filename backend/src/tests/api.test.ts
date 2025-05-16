@@ -90,7 +90,7 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     expect(res.body).toHaveProperty("basketName");
     expect(typeof res.body.basketName).toBe("string");
     expect(res.body.basketName.length).toBe(7);
-    expect(res.body).toEqual({basketName: "3456789"});
+    expect(res.body).toEqual({ basketName: "3456789" });
   });
 
   test("GET /api/baskets/generate_token without name returns 400", async () => {
@@ -129,5 +129,27 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     jest.restoreAllMocks();
   });
 
-  
+  test("POST /api//baskets/:name with valid basket name returns basketName", async () => {
+    jest.spyOn(pgClient, "addNewBasket").mockResolvedValue();
+
+    const res = await request(app).post("/api/baskets/newBasket");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("basketName");
+    expect(typeof res.body.basketName).toBe("string");
+    expect(res.headers["content-type"]).toMatch(/application\/json/);
+
+    jest.restoreAllMocks();
+  });
+
+  test("POST /api//baskets/:name with invalid basket name returns Basket name taken", async () => {
+    jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(true);
+
+    const res = await request(app).post("/api/baskets/newBasket");
+
+    expect(res.statusCode).toBe(409);
+    expect(res.text).toBe("Basket name taken");
+
+    jest.restoreAllMocks();
+  });
 });
