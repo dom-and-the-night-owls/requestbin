@@ -45,6 +45,7 @@ jest.mock("../utils", () => {
     __esModule: true,
     ...originalModule,
     generateToken: jest.fn().mockResolvedValue("mock-token-123"),
+    generateRandomString: jest.fn().mockReturnValue("12345678901"),
   };
 });
 
@@ -89,6 +90,7 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     expect(res.body).toHaveProperty("basketName");
     expect(typeof res.body.basketName).toBe("string");
     expect(res.body.basketName.length).toBe(7);
+    expect(res.body).toEqual({basketName: "3456789"});
   });
 
   test("GET /api/baskets/generate_token without name returns 400", async () => {
