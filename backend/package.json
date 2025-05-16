@@ -9,7 +9,7 @@
     "test": "NODE_ENV=test jest --runInBand --detectOpenHandles",
     "start": "NODE_ENV=production node build/server.js",
     "db-init": "createdb requestbin && psql -d requestbin < schema.sql",
-    "mock": "NODE_ENV=mock ts-node-dev ./src/main.ts",
+    "mock": "NODE_ENV=mock ts-node-dev ./src/server.ts",
     "build:backend": "npm install && npm run tsc",
     "build:frontend": "rm -rf dist && cd ../frontend && npm install && npm run build && cp -r dist ../backend",
     "build:full": "npm run db-init && npm run build:backend && npm run build:frontend"

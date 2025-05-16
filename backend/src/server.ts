@@ -11,7 +11,6 @@ async function startServer() {
   let app: Express;
 
   if (environment === "mock") {
-    console.log("Starting mock API...");
     app = createApp(null as any, null as any);
   } else {
     const pg = new PostgresClient();
