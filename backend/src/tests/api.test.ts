@@ -71,6 +71,7 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     await request(app)
       .get("/api/baskets")
       .expect(200)
-      .expect("Content-Type", /application\/json/);
+      .expect("Content-Type", /application\/json/)
+      .expect({ basketNames: [] });
   });
 });
