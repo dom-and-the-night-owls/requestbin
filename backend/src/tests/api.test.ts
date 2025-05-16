@@ -1,36 +1,70 @@
-// // import { Express } from "express";
-// // import request from "supertest";
-// // import { createApp } from "../main";
-// import { MongoMemoryServer } from "mongodb-memory-server";
-// import mongoose from "mongoose";
-// // import { newDb } from "pg-mem";
-// // import PostgresClient from "../controllers/postgresql";
-// import MongoClient from "../controllers/mongo";
+import { Express } from "express";
+import request from "supertest";
+import { createApp } from "../main";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import MongoClient from "../controllers/mongo";
+import { Pool } from "pg";
+import { newDb } from "pg-mem";
+import PostgresClient from "../controllers/postgresql";
 
-// describe("API tests with in-memory Mongo and Postgres", () => {
-//   let mongoServer: MongoMemoryServer;
-//   // let app: Express;
+class TestPostgresClient extends PostgresClient {
+  constructor(pool: Pool) {
+    super();
+    this.pool = pool;
+  }
+}
 
-//   beforeAll(async () => {
-//     mongoServer = await MongoMemoryServer.create();
-//     const mongoUri = `${mongoServer.getUri()}/testRequestBodies`;
-//     const mongoClient = new MongoClient(mongoUri);
-//     await mongoClient.connectToDatabase();
+function setupTestPostgresClient(): TestPostgresClient {
+  const pgMem = newDb();
 
-//     // const pgMem = newDb();
-//     // Use pgMem to set up schema and mock PostgresClient
-//     // const pgClient = setupPgClient(pgMem); // We'll define this below
+  // This creates a pg-compatible client
+  const client = pgMem.adapters.createPg();
 
-//     // Create app with in-memory DBs
-//     // app = createApp(pgClient, mongoClient);
-//   });
+  // Create schema
+  pgMem.public.none(`
+    CREATE TABLE baskets (
+      name TEXT PRIMARY KEY,
+      token TEXT
+    );
 
-//   afterAll(async () => {
-//     await mongoose.disconnect();
-//     await mongoServer.stop();
-//   });
+    CREATE TABLE requests (
+      id SERIAL PRIMARY KEY,
+      basket_name TEXT REFERENCES baskets(name),
+      sent_at TIMESTAMP,
+      method TEXT,
+      headers JSONB,
+      body_mongo_id TEXT
+    );
+  `);
 
-//   test("GET /ping returns pong", async () => {
+  return new TestPostgresClient(client.Pool);
+}
 
-//   });
-// });
+
+describe("API tests with in-memory Mongo and Postgres", () => {
+  let mongoServer: MongoMemoryServer;
+  let app: Express;
+  let mongoClient: MongoClient;
+
+  beforeAll(async () => {
+    mongoServer = await MongoMemoryServer.create();
+    const mongoUri = mongoServer.getUri();
+    mongoClient = new MongoClient(mongoUri);
+    await mongoClient.connectToDatabase();
+
+    const pgClient = setupTestPostgresClient();
+    app = createApp(pgClient, mongoClient);
+  });
+
+  afterAll(async () => {
+    await mongoClient.closeConnection();
+    await mongoServer.stop();
+  });
+
+  test("GET /api/ping returns pong", async () => {
+    const res = await request(app).get("/api/ping");
+    console.log(res.statusCode);
+    expect(res.statusCode).toBe(200);
+    expect(res.text).toBe("pong");
+  });
+});

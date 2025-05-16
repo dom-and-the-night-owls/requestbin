@@ -3,8 +3,6 @@ import express from "express";
 import mockApiRouter from "./routes/mockApi";
 import apiRouter from "./routes/api";
 import hookRouter from "./routes/hook";
-import PostgresClient from "./controllers/postgresql";
-import MongoClient from "./controllers/mongo";
 import { IMongoClient, IPostgresClient } from "./types";
 
 export function createApp(pg: IPostgresClient, mongo: IMongoClient) {
@@ -45,16 +43,3 @@ export function createApp(pg: IPostgresClient, mongo: IMongoClient) {
 
   return app;
 }
-
-const PORT = process.env.PORT || 3000;
-
-(async () => {
-  const pg = new PostgresClient();
-  const mongo = new MongoClient();
-  await mongo.connectToDatabase();
-
-  const app = createApp(pg, mongo);
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-})();
