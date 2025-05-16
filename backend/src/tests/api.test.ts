@@ -146,7 +146,7 @@ describe("API tests with in-memory Mongo and Postgres", () => {
   test("POST /api/baskets/:name with invalid basket name returns Basket name taken", async () => {
     jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(true);
 
-    const res = await request(app).post("/api/baskets/newBasket");
+    const res = await request(app).post("/api/baskets/invalidNewBasket");
 
     expect(res.statusCode).toBe(409);
     expect(res.text).toBe("Basket name taken");
@@ -160,7 +160,7 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     jest.spyOn(pgClient, "deleteBasket").mockResolvedValue(true);
     jest.spyOn(pgClient, "getBasketRequestBodyIds").mockResolvedValue(["1", "2"]);
 
-    const res = await request(app).delete("/api/baskets/newBasket");
+    const res = await request(app).delete("/api/baskets/myBasket");
 
     expect(res.statusCode).toBe(204);
 
@@ -170,10 +170,46 @@ describe("API tests with in-memory Mongo and Postgres", () => {
   test("DELETE /api/baskets/:name with invalid basket return 404  Basket does not exist", async () => {
     jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(false);
 
-    const res = await request(app).delete("/api/baskets/newBasket");
+    const res = await request(app).delete("/api/baskets/invalidBasket");
 
     expect(res.statusCode).toBe(404);
     expect(res.text).toBe("Basket does not exist");
+
+    jest.restoreAllMocks();
+  });
+
+  test("GET /api/baskets/:name/requests with invalid basket return 404 Basket does not exist", async () => {
+    jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(false);
+
+    const res = await request(app).get("/api/baskets/invalidBasket/requests");
+
+    expect(res.statusCode).toBe(404);
+    expect(res.text).toBe("Basket does not exist");
+
+    jest.restoreAllMocks();
+  });
+
+  test("GET /api/baskets/:name/requests with valid basket return 200 requests", async () => {
+    jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(true);
+    jest.spyOn(pgClient, "fetchBasketContents").mockResolvedValue([{
+      basketName: "validBasket",
+      sentAt: new Date().toISOString(),
+      method: "GET",
+      headers: '{"content-type":"application/json"}',
+      bodyMongoId: "bodyMongoId123",
+    }]);
+    jest.spyOn(mongoClient, "getRequestBody").mockResolvedValue("bodyMongoId123");
+
+    const res = await request(app).get("/api/baskets/validBasket/requests");
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("requests");
+    expect(Array.isArray(res.body.requests)).toBe(true);
+    expect(res.body.requests.length).toBeGreaterThan(0);
+    expect(res.body.requests[0]).toMatchObject({
+      basketName: "validBasket",
+      method: "GET",
+    });
 
     jest.restoreAllMocks();
   });
