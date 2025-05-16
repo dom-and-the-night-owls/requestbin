@@ -119,7 +119,7 @@ export default function basketRouter(pg: IPostgresClient, mongo: IMongoClient) {
         (await mongo.deleteBodyRequests(mongoIds)) &&
         (await pg.deleteBasketRequests(basketName));
 
-      if (successfulDelete) res.status(204).send("Basket has been cleared");
+      if (successfulDelete) res.status(200).send("Basket has been cleared");
     }
   );
 
