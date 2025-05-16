@@ -3,9 +3,9 @@ import request from "supertest";
 import { createApp } from "../main";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import MongoClient from "../controllers/mongo";
-import { Pool } from "pg";
 import { newDb } from "pg-mem";
 import PostgresClient from "../controllers/postgresql";
+import { Pool } from "pg";
 
 class TestPostgresClient extends PostgresClient {
   constructor(pool: Pool) {
@@ -16,9 +16,6 @@ class TestPostgresClient extends PostgresClient {
 
 function setupTestPostgresClient(): TestPostgresClient {
   const pgMem = newDb();
-
-  // This creates a pg-compatible client
-  const client = pgMem.adapters.createPg();
 
   // Create schema
   pgMem.public.none(`
@@ -37,9 +34,12 @@ function setupTestPostgresClient(): TestPostgresClient {
     );
   `);
 
-  return new TestPostgresClient(client.Pool);
-}
+  // Get a pool that implements the same interface as pg.Pool
+  const { Pool } = pgMem.adapters.createPg();
+  const pool = new Pool(); // ← this is valid, works like pg.Pool
 
+  return new TestPostgresClient(pool);
+}
 
 describe("API tests with in-memory Mongo and Postgres", () => {
   let mongoServer: MongoMemoryServer;
@@ -67,10 +67,10 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     expect(res.text).toBe("pong");
   });
 
-  // test("GET /api/baskets returns json response", async () => {
-  //   await request(app)
-  //   .get("/api/baskets")
-  //   .expect(200)
-  //   .expect("Content-Type", /application\/json/);
-  // });
+  test("GET /api/baskets returns json response", async () => {
+    await request(app)
+      .get("/api/baskets")
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+  });
 });
