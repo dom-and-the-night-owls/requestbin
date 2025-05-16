@@ -5,8 +5,8 @@ class MongoClient implements IMongoClient {
   private uri: string;
   private requestBodyModel: mongoose.Model<RequestBody>;
 
-  constructor(uri?: string) {
-    this.uri = uri || `${process.env.MONGO_URI}/requestBodies`;
+  constructor(uri: string = `${process.env.MONGODB_URI}`) {
+    this.uri = uri;
 
     const schema = new mongoose.Schema<RequestBody>({
       request: mongoose.Schema.Types.String,

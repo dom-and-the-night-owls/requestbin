@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "tsc": "tsc",
-    "dev": "NODE_ENV=development ts-node-dev ./src/main.ts",
+    "dev": "NODE_ENV=development ts-node-dev ./src/server.ts",
     "test": "NODE_ENV=test jest --runInBand --detectOpenHandles",
-    "start": "NODE_ENV=production node build/main.js",
+    "start": "NODE_ENV=production node build/server.js",
     "db-init": "createdb requestbin && psql -d requestbin < schema.sql",
     "mock": "NODE_ENV=mock ts-node-dev ./src/main.ts",
     "build:backend": "npm install && npm run tsc",
