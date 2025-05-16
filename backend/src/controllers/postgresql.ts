@@ -1,8 +1,8 @@
 import { Pool, PoolClient, QueryResult } from "pg";
-import { Basket, Request } from "../types";
+import { Basket, IPostgresClient, Request } from "../types";
 import { normalizeRequest } from "../utils";
 
-class PostgresClient {
+class PostgresClient implements IPostgresClient {
   pool: Pool;
 
   constructor() {

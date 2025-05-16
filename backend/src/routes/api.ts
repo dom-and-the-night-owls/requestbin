@@ -1,9 +1,8 @@
 import express, { Request, Response } from "express";
 import { generateRandomString, generateToken } from "../utils";
-import PostgresClient from "../controllers/postgresql";
-import MongoClient from "../controllers/mongo";
+import { IMongoClient, IPostgresClient } from "../types";
 
-export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
+export default function basketRouter(pg: IPostgresClient, mongo: IMongoClient) {
   const router = express.Router();
 
   router.get("/baskets", async (_req: Request, res: Response) => {
@@ -42,12 +41,12 @@ export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
     const basketName = req.params.name;
 
     if (await pg.doesBasketExist(basketName)) {
-      res.status(409).json("Basket name taken");
+      res.status(409).send("Basket name taken");
       return;
     }
 
     await pg.addNewBasket(basketName);
-    res.status(200).send({ basketName });
+    res.status(200).json({ basketName });
   });
 
   router.delete(
@@ -120,7 +119,7 @@ export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
         (await mongo.deleteBodyRequests(mongoIds)) &&
         (await pg.deleteBasketRequests(basketName));
 
-      if (successfulDelete) res.status(204).send("Basket has been cleared");
+      if (successfulDelete) res.status(200).send("Basket has been cleared");
     }
   );
 
