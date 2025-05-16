@@ -17,7 +17,6 @@ class TestPostgresClient extends PostgresClient {
 function setupTestPostgresClient(): TestPostgresClient {
   const pgMem = newDb();
 
-  // Create schema
   pgMem.public.none(`
     CREATE TABLE baskets (
       name TEXT PRIMARY KEY,
@@ -34,17 +33,26 @@ function setupTestPostgresClient(): TestPostgresClient {
     );
   `);
 
-  // Get a pool that implements the same interface as pg.Pool
   const { Pool } = pgMem.adapters.createPg();
-  const pool = new Pool(); // ← this is valid, works like pg.Pool
+  const pool = new Pool();
 
   return new TestPostgresClient(pool);
 }
+
+jest.mock("../utils", () => {
+  const originalModule = jest.requireActual("../utils");
+  return {
+    __esModule: true,
+    ...originalModule,
+    generateToken: jest.fn().mockResolvedValue("mock-token-123"),
+  };
+});
 
 describe("API tests with in-memory Mongo and Postgres", () => {
   let mongoServer: MongoMemoryServer;
   let app: Express;
   let mongoClient: MongoClient;
+  let pgClient: TestPostgresClient;
 
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
@@ -52,7 +60,7 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     mongoClient = new MongoClient(mongoUri);
     await mongoClient.connectToDatabase();
 
-    const pgClient = setupTestPostgresClient();
+    pgClient = setupTestPostgresClient();
     app = createApp(pgClient, mongoClient);
   });
 
@@ -81,5 +89,41 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     expect(res.body).toHaveProperty("basketName");
     expect(typeof res.body.basketName).toBe("string");
     expect(res.body.basketName.length).toBe(7);
+  });
+
+  test("GET /api/baskets/generate_token without name returns 400", async () => {
+    const res = await request(app).get("/api/baskets/generate_token");
+    expect(res.statusCode).toBe(400);
+    expect(res.text).toBe("Missing basket name");
+  });
+
+  test("GET /api/baskets/generate_token with nonexistent basket returns 404", async () => {
+    jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(false);
+
+    const res = await request(app).get(
+      "/api/baskets/generate_token?name=testBasket"
+    );
+
+    expect(res.statusCode).toBe(404);
+    expect(res.text).toBe("Basket does not exist");
+
+    jest.restoreAllMocks();
+  });
+
+  test("GET /api/baskets/generate_token with existing basket returns token", async () => {
+    jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(true);
+    jest
+      .spyOn(pgClient, "storeToken")
+      .mockResolvedValue({ name: "testBasket", token: "mock-token-123" });
+
+    const res = await request(app).get(
+      "/api/baskets/generate_token?name=testBasket"
+    );
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toHaveProperty("token");
+    expect(typeof res.body.token).toBe("string");
+
+    jest.restoreAllMocks();
   });
 });
