@@ -129,8 +129,9 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     jest.restoreAllMocks();
   });
 
-  test("POST /api//baskets/:name with valid basket name returns basketName", async () => {
+  test("POST /api/baskets/:name with valid basket name returns basketName", async () => {
     jest.spyOn(pgClient, "addNewBasket").mockResolvedValue();
+    jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(false);
 
     const res = await request(app).post("/api/baskets/newBasket");
 
@@ -142,13 +143,37 @@ describe("API tests with in-memory Mongo and Postgres", () => {
     jest.restoreAllMocks();
   });
 
-  test("POST /api//baskets/:name with invalid basket name returns Basket name taken", async () => {
+  test("POST /api/baskets/:name with invalid basket name returns Basket name taken", async () => {
     jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(true);
 
     const res = await request(app).post("/api/baskets/newBasket");
 
     expect(res.statusCode).toBe(409);
     expect(res.text).toBe("Basket name taken");
+
+    jest.restoreAllMocks();
+  });
+
+  test("DELETE /api/baskets/:name with valid basket return 204 No content", async () => {
+    jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(true);
+    jest.spyOn(mongoClient, "deleteBodyRequests").mockResolvedValue(true);
+    jest.spyOn(pgClient, "deleteBasket").mockResolvedValue(true);
+    jest.spyOn(pgClient, "getBasketRequestBodyIds").mockResolvedValue(["1", "2"]);
+
+    const res = await request(app).delete("/api/baskets/newBasket");
+
+    expect(res.statusCode).toBe(204);
+
+    jest.restoreAllMocks();
+  });
+
+  test("DELETE /api/baskets/:name with invalid basket return 404  Basket does not exist", async () => {
+    jest.spyOn(pgClient, "doesBasketExist").mockResolvedValue(false);
+
+    const res = await request(app).delete("/api/baskets/newBasket");
+
+    expect(res.statusCode).toBe(404);
+    expect(res.text).toBe("Basket does not exist");
 
     jest.restoreAllMocks();
   });
