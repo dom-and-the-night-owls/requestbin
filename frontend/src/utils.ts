@@ -17,8 +17,8 @@ export const setErrorNotifier = (notifier: NotificationFunction) => {
 export const handleAPIError = (e: unknown, msg?: string) => {
   console.error(e);
   if (!msg) {
-    if (axios.isAxiosError(e) && e.response?.data?.message) {
-      msg = e.response.data.message;
+    if (axios.isAxiosError(e) && e.response?.data) {
+      msg = e.response.data;
     } else if (e instanceof Error) {
       msg = e.message;
     }

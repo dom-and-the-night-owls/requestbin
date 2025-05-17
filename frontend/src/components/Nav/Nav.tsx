@@ -25,7 +25,7 @@ const Nav = () => {
           color="inherit"
           href="https://github.com/dom-and-the-night-owls/requestbin/wiki/API-Documentation"
         >
-          documentation
+          docs
         </Button>
       </Toolbar>
     </AppBar>
