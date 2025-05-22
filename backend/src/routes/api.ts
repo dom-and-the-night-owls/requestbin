@@ -6,6 +6,10 @@ import MongoClient from "../controllers/mongo";
 export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
   const router = express.Router();
 
+  router.get("/health", async (_req: Request, res: Response) => {
+    res.status(200).send();
+  });
+
   router.get("/baskets", async (_req: Request, res: Response) => {
     const response = await pg.getBaskets();
     const basketNames = response.map(({ name }) => name);
@@ -67,7 +71,7 @@ export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
         (await pg.deleteBasket(basketName));
 
       if (successfulDelete) res.status(204).json();
-    }
+    },
   );
 
   router.get(
@@ -99,9 +103,9 @@ export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
       });
 
       Promise.all(mappedResult).then((requests) =>
-        res.status(200).json({ requests })
+        res.status(200).json({ requests }),
       );
-    }
+    },
   );
 
   router.delete(
@@ -121,7 +125,7 @@ export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
         (await pg.deleteBasketRequests(basketName));
 
       if (successfulDelete) res.status(204).send("Basket has been cleared");
-    }
+    },
   );
 
   router.get("/baskets/validate", async (req: Request, res: Response) => {
