@@ -27,9 +27,9 @@ const RequestList = ({
       columns={{ xs: 4, sm: 12 }}
       sx={{ paddingTop: 1 }}
     >
-      {requests.map((request, i) => (
+      {requests.map((request) => (
         <Request
-          key={i}
+          key={request.sentAt}
           originURL={originURL}
           showJSON={showJSON}
           {...request}
