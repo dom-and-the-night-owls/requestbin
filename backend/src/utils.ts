@@ -7,6 +7,7 @@ export function generateRandomString() {
   return Math.random().toString(36).substring(2);
 }
 
+// TODO: Refactor this so it's with the rest of the pg methods
 export async function generateToken(): Promise<string> {
   let token: string = "";
   const pg = new PostgresController();
@@ -16,7 +17,7 @@ export async function generateToken(): Promise<string> {
   try {
     do {
       const segments: string[] = Array.from({ length: 3 }, () =>
-        generateRandomString()
+        generateRandomString(),
       );
       token = segments.join("");
 
