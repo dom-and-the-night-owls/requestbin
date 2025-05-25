@@ -6,24 +6,13 @@ import apiRouter from "./routes/api";
 import hookRouter from "./routes/hook";
 import PostgresClient from "./controllers/postgresql";
 import MongoClient from "./controllers/mongo";
+import { rawBodyParser } from "./middleware";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware to store raw data in the request
-app.use((req, _res, next) => {
-  let data = "";
-
-  req.setEncoding("utf8");
-  req.on("data", (chunk) => {
-    data += chunk;
-  });
-
-  req.on("end", () => {
-    (req as any).rawBody = data;
-    next();
-  });
-});
+app.use(rawBodyParser);
 
 app.use(express.json());
 app.use(express.static("dist"));
