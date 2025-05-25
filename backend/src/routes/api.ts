@@ -20,7 +20,7 @@ export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
     let basketName: string = "";
 
     do {
-      basketName = generateRandomString().substring(2, 9);
+      basketName = generateRandomString();
     } while (await pg.doesBasketExist(basketName));
 
     res.status(200).json({ basketName });
