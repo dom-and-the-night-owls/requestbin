@@ -2,8 +2,10 @@ import "dotenv/config";
 import { Client } from "pg";
 import * as fs from "node:fs";
 import path from "node:path";
+import config from "./config/config";
 
-const DB_NAME: string = process.env.PGDATABASE || "requestbin";
+const CONFIG = config.getPGConfig();
+const DB_NAME: string = CONFIG.database;
 
 const isDatabaseCreated = async (client: Client): Promise<boolean> => {
   const query = "SELECT * FROM pg_database WHERE datname = $1";
@@ -20,10 +22,7 @@ const createDatabase = async (client: Client) => {
 
 const initializeDB = async () => {
   const client: Client = new Client({
-    user: process.env.PGUSER, // default process.env.USER
-    password: process.env.PGPASSWORD, //default process.env.PGPASSWORD
-    host: process.env.PGHOST,
-    port: Number(process.env.PGPORT),
+    ...CONFIG,
     database: "postgres", // connect to the default postgres db
   });
 
@@ -44,13 +43,7 @@ const initializeDB = async () => {
 };
 
 const createDatabaseTables = async () => {
-  const client: Client = new Client({
-    user: process.env.PGUSER, // default process.env.USER
-    password: process.env.PGPASSWORD, //default process.env.PGPASSWORD
-    host: process.env.PGHOST,
-    port: parseInt(process.env.PGPORT ?? "5432"),
-    database: DB_NAME,
-  });
+  const client: Client = new Client(CONFIG);
 
   console.log("Creating database tables");
   await client.connect();
