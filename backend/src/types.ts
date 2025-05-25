@@ -1,14 +1,5 @@
 import { Document } from "mongoose";
 
-export interface MockRequest {
-  basketName: string;
-  method: string;
-  sentAt: string;
-  headers: string;
-  requestBodyContentType: string;
-  requestBody: string;
-}
-
 export interface Basket {
   name: string;
   token: string;
