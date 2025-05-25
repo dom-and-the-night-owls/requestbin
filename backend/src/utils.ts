@@ -1,33 +1,12 @@
 import { IncomingHttpHeaders } from "http";
-import { QueryResult } from "pg";
-import PostgresController from "./controllers/postgresql";
 import { Request, PostgresRequestRow } from "./types";
 
-export function generateRandomString() {
-  return Math.random().toString(36).substring(2);
-}
-
-// TODO: Refactor this so it's with the rest of the pg methods
-export async function generateToken(): Promise<string> {
-  let token: string = "";
-  const pg = new PostgresController();
-  pg.connect();
-  let result: QueryResult;
-
-  try {
-    do {
-      const segments: string[] = Array.from({ length: 3 }, () =>
-        generateRandomString(),
-      );
-      token = segments.join("");
-
-      result = await pg.getToken(token);
-    } while ((result.rowCount ?? 0) > 0);
-    return token;
-  } catch (err) {
-    console.error("Error generating token:", err);
-    throw new Error("Failed to generate token");
+export function generateRandomString(length = 8) {
+  let result = "";
+  while (result.length < length) {
+    result += Math.random().toString(36).substring(2);
   }
+  return result.substring(0, length);
 }
 
 export function headersToString(headers: IncomingHttpHeaders): string {

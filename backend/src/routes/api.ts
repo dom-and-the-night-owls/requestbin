@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { generateRandomString, generateToken } from "../utils";
+import { generateRandomString } from "../utils";
 import PostgresClient from "../controllers/postgresql";
 import MongoClient from "../controllers/mongo";
 
@@ -37,7 +37,7 @@ export default function basketRouter(pg: PostgresClient, mongo: MongoClient) {
       return;
     }
 
-    let token: string = await generateToken();
+    let token: string = await pg.generateToken();
     await pg.storeToken(token, basketName);
     res.status(200).json({ token });
   });
