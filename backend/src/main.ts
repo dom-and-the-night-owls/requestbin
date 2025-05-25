@@ -16,21 +16,25 @@ app.use(rawBodyParser);
 app.use(express.json());
 app.use(express.static("dist"));
 
-let pg: PostgresClient;
-let mongo: MongoClient;
+const initApp = async () => {
+  let pg: PostgresClient;
+  let mongo: MongoClient;
 
-pg = new PostgresClient();
-mongo = new MongoClient();
-(async () => await mongo.connectToDatabase())();
-app.use("/api", apiRouter(pg, mongo));
-app.use("/hook", hookRouter(pg, mongo));
+  pg = new PostgresClient();
+  mongo = new MongoClient();
+  await mongo.connectToDatabase();
+  app.use("/api", apiRouter(pg, mongo));
+  app.use("/hook", hookRouter(pg, mongo));
 
-// Catch-all route enabling react refresh
-// express v5 requires * wildcard to have a name
-app.get("/*path", (_, res) => {
-  res.sendFile(path.join(__dirname, "../dist", "index.html"));
-});
+  // Catch-all route enabling react refresh
+  // express v5 requires * wildcard to have a name
+  app.get("/*path", (_, res) => {
+    res.sendFile(path.join(__dirname, "../dist", "index.html"));
+  });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+};
+
+initApp();
