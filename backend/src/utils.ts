@@ -1,13 +1,13 @@
 import { IncomingHttpHeaders } from "http";
+import { customAlphabet } from "nanoid";
+import { alphanumeric } from "nanoid-dictionary";
+
 import { Request, PostgresRequestRow } from "./types";
 
-export function generateRandomString(length = 8) {
-  let result = "";
-  while (result.length < length) {
-    result += Math.random().toString(36).substring(2);
-  }
-  return result.substring(0, length);
-}
+export const generateRandomString: (length?: number) => string = customAlphabet(
+  alphanumeric,
+  7,
+);
 
 export function headersToString(headers: IncomingHttpHeaders): string {
   let headerString = "";
