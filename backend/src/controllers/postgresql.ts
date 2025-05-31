@@ -1,12 +1,12 @@
 import { Pool, PoolClient, QueryResult } from "pg";
-import { Basket, Request } from "../types";
-import { normalizeRequest } from "../utils";
+import { Basket, Request, PGConfig } from "../types";
+import { normalizeRequest, generateRandomString } from "../utils";
 
 class PostgresClient {
   pool: Pool;
 
-  constructor() {
-    this.pool = new Pool();
+  constructor(config?: PGConfig) {
+    this.pool = new Pool(config);
     console.log("Connected to PostgreSQL server");
   }
 
@@ -61,6 +61,19 @@ class PostgresClient {
     const query: string = "SELECT * FROM baskets WHERE name = ($1)";
     let result: QueryResult = await this.pool.query(query, [name]);
     return (result.rowCount ?? 0) > 0;
+  }
+
+  public async generateToken(): Promise<string> {
+    try {
+      while (true) {
+        const token = generateRandomString(32);
+        const result = await this.getToken(token);
+        if (!result.rowCount) return token;
+      }
+    } catch (err) {
+      console.error("Error generating token:", err);
+      throw new Error("Failed to generate token");
+    }
   }
 
   public async storeToken(token: string, basketName: string): Promise<Basket> {

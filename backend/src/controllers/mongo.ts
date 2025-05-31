@@ -1,12 +1,20 @@
 import mongoose from "mongoose";
-import { RequestBody } from "../types";
+import type { ConnectOptions } from "mongoose";
+import { MongoConfig, RequestBody } from "../types";
 
 class MongoClient {
-  private dbName: string;
+  private host: string;
+  private port: number;
+  private uri: string;
+  private connectOptions: ConnectOptions;
   private requestBodyModel: mongoose.Model<RequestBody>;
 
-  constructor(dbName: string = "requestBodies") {
-    this.dbName = dbName;
+  constructor(config: MongoConfig = {}) {
+    const { host, port, ...connectOptions } = config;
+    this.host = host ?? "localhost";
+    this.port = port ?? 27017;
+    this.uri = `mongodb://${this.host}:${this.port}`;
+    this.connectOptions = connectOptions;
 
     const schema = new mongoose.Schema<RequestBody>({
       request: mongoose.Schema.Types.String,
@@ -41,7 +49,7 @@ class MongoClient {
   public async connectToDatabase(): Promise<void> {
     try {
       if (mongoose.connection.readyState !== 1) {
-        await mongoose.connect(`${process.env.MONGODB_URI}/${this.dbName}`);
+        await mongoose.connect(this.uri, this.connectOptions);
         console.log("Connected to MongoDB");
       }
     } catch (error: any) {

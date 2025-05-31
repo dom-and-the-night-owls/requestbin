@@ -1,33 +1,13 @@
 import { IncomingHttpHeaders } from "http";
-import { QueryResult } from "pg";
-import PostgresController from "./controllers/postgresql";
+import { customAlphabet } from "nanoid";
+import { alphanumeric } from "nanoid-dictionary";
+
 import { Request, PostgresRequestRow } from "./types";
 
-export function generateRandomString() {
-  return Math.random().toString(36).substring(2);
-}
-
-export async function generateToken(): Promise<string> {
-  let token: string = "";
-  const pg = new PostgresController();
-  pg.connect();
-  let result: QueryResult;
-
-  try {
-    do {
-      const segments: string[] = Array.from({ length: 3 }, () =>
-        generateRandomString()
-      );
-      token = segments.join("");
-
-      result = await pg.getToken(token);
-    } while ((result.rowCount ?? 0) > 0);
-    return token;
-  } catch (err) {
-    console.error("Error generating token:", err);
-    throw new Error("Failed to generate token");
-  }
-}
+export const generateRandomString: (length?: number) => string = customAlphabet(
+  alphanumeric,
+  7,
+);
 
 export function headersToString(headers: IncomingHttpHeaders): string {
   let headerString = "";

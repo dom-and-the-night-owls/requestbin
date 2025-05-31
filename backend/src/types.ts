@@ -1,13 +1,5 @@
 import { Document } from "mongoose";
-
-export interface MockRequest {
-  basketName: string;
-  method: string;
-  sentAt: string;
-  headers: string;
-  requestBodyContentType: string;
-  requestBody: string;
-}
+import type { ConnectOptions } from "mongoose";
 
 export interface Basket {
   name: string;
@@ -33,4 +25,17 @@ export interface PostgresRequestRow {
   method: string;
   headers: string;
   body_mongo_id: string;
+}
+
+export interface PGConfig {
+  user?: string;
+  password?: string;
+  host?: string;
+  port?: number;
+  database?: string;
+}
+
+export interface MongoConfig extends ConnectOptions {
+  host?: string;
+  port?: number;
 }

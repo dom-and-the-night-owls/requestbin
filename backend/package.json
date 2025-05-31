@@ -8,7 +8,6 @@
     "dev": "ts-node-dev ./src/main.ts",
     "start": "node build/main.js",
     "db-init": "ts-node src/pgDatabaseInit.ts",
-    "mock": "USE_MOCK_API=true ts-node-dev ./src/main.ts",
     "build:backend": "npm install && npm run tsc",
     "build:frontend": "rm -rf dist && cd ../frontend && npm install && npm run build && cp -r dist ../backend",
     "build": "npm run build:backend && npm run build:frontend && npm run db-init",
@@ -30,7 +29,10 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongoose": "^8.14.2",
-    "pg": "^8.15.6"
+    "nanoid": "^5.1.5",
+    "nanoid-dictionary": "^5.0.0",
+    "pg": "^8.15.6",
+    "zod": "^3.25.28"
   },
   "devDependencies": {
     "@types/node": "^22.15.17",

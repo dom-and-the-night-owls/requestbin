@@ -31,23 +31,37 @@ RequestBasket is a web service that allows you to create unique web hooks to cap
 - Request payload data is stored in MongoDB.
 - State persistence is implemented via browser local storage, allowing users to access the same baskets across sessions.
 
-## Requirements
+## Configuration
 
-In the `backend` directory, create a `.env` file with the following contents:
+Depending on the settings of your `psql` and `mongod` services, you may need to specify some connection options like user, password, port, etc.
+To do so, create a `.env` file in the `backend` directory according to the format of the provided `.env.example` file:
 
 ```env
-# PostgreSQL configuration
-PGHOST=localhost
-PGDATABASE=requestbin
-PGPORT=5432           # Default PostgreSQL port
-PGUSER=postgres       # Replace with your PostgreSQL username
-PGPASSWORD=postgres   # Replace with your PostgreSQL password
-
-# MongoDB configuration
-MONGODB_URI=mongodb://localhost:27017 # Default MongoDB URI
+# Example .env file
+# All values are optional
 
 # Application port
 PORT=3000             # Port the backend server will run on
+
+# Postgres configuration
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=requestbin
+PGUSER=postgres
+PGPASSWORD=password
+
+# MongoDB configuration
+MONGO_HOST=localhost
+MONGO_DBNAME=requestBodies
+MONGO_USER=mongoUser
+MONGO_PASS=password
+MONGO_TLS=true
+MONGO_CA_PATH=/path/to/tlsCertKeyFile.pem
+MONGO_REPLICA_SET=rs0
+MONGO_READ_PREF=secondaryPreferred
+MONGO_RETRY_WRITES=false
+MONGO_AUTH_SRC=admin
+
 ```
 
 💡**Note:** Ensure that PostgreSQL and MongoDB are installed and running locally with the above credentials. You may need to adjust these values to match your environment.
