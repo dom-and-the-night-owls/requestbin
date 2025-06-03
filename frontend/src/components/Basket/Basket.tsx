@@ -89,9 +89,13 @@ const Basket = ({ originURL }: BasketProps) => {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchRequests = async () => {
       try {
-        const requests = await apiService.getRequests(basketName);
+        const requests = await apiService.getRequests(
+          basketName,
+          controller.signal,
+        );
         setRequests(reverse ? requests.toReversed() : requests);
       } catch (error: unknown) {
         handleAPIError(error);
@@ -101,7 +105,10 @@ const Basket = ({ originURL }: BasketProps) => {
     fetchRequests();
     const intervalId = setInterval(fetchRequests, POLLING_INTERVAL);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+      controller.abort();
+    };
   }, [basketName, reverse]);
 
   return (
