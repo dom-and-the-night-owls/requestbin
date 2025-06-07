@@ -1,9 +1,15 @@
 import { createContext } from "react";
-import type { showNotificationType } from "./NotificationsProvider";
+import type {
+  ShowNotification,
+  CloseNotification,
+  RemoveNotification,
+} from "./NotificationsProvider";
 
-export interface NotificationsContextType {
-  showNotification: showNotificationType;
+export interface NotificationsContextValue {
+  show: ShowNotification;
+  close: CloseNotification;
+  remove: RemoveNotification;
 }
 
 export const NotificationsContext =
-  createContext<NotificationsContextType | null>(null);
+  createContext<NotificationsContextValue | null>(null);

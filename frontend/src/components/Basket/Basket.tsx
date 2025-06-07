@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useNotifications } from "@toolpad/core/useNotifications";
+import { useNotifications } from "../../components/useNotifications";
 import type { Request as RequestType } from "../../types";
 import apiService from "../../services/apiService";
 import { handleAPIError, removeBasket } from "../../utils";

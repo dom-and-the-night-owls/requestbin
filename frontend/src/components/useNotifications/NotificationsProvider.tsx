@@ -1,50 +1,179 @@
-import React, { useState } from "react";
+import { useState, useContext, useMemo, useCallback } from "react";
+import type { ReactNode } from "react";
 import Snackbar from "@mui/material/Snackbar";
+import SnackbarContent from "@mui/material/SnackbarContent";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 import Alert from "@mui/material/Alert";
+import Badge from "@mui/material/Badge";
 import { NotificationsContext } from "./NotificationsContext";
 
-export type Severity = "error" | "info" | "success" | "warning";
+let nextId = 0;
+const generateId = () => {
+  const id = nextId;
+  nextId += 1;
+  return id;
+};
 
-export type showNotificationType = (
-  message: string,
-  severity?: Severity,
-) => void;
-
-export interface NotificationsProviderProps {
-  children?: React.ReactNode;
+export interface ShowNotificationOptions {
+  key?: string;
+  severity?: "info" | "warning" | "error" | "success";
+  autoHideDuration?: number;
+  actionText?: React.ReactNode;
+  onAction?: () => void;
 }
 
-const NotificationsProvider = ({ children }: NotificationsProviderProps) => {
-  const [message, setMessage] = useState("");
-  const [severity, setSeverity] = useState<Severity | undefined>();
-  const [open, setOpen] = useState(false);
+export interface NotificationQueueItem {
+  notificationKey: string;
+  message: string;
+  isOpen: boolean;
+  options: ShowNotificationOptions;
+}
 
-  const showNotification: showNotificationType = (message, severity) => {
-    setMessage(message);
-    setSeverity(severity);
-    setOpen(true);
+interface NotificationProps extends NotificationQueueItem {
+  badge?: string;
+}
+
+const Notification = ({
+  notificationKey,
+  message,
+  isOpen,
+  options,
+  badge,
+}: NotificationProps) => {
+  const { close, remove } = useContext(NotificationsContext)!;
+  const handleClose = useCallback(
+    (_event: unknown, reason?: string) => {
+      if (reason === "clickaway") {
+        return;
+      }
+      close(notificationKey);
+    },
+    [notificationKey, close],
+  );
+
+  const handleExited = useCallback(() => {
+    remove(notificationKey);
+  }, [notificationKey, remove]);
+
+  const action = (
+    <>
+      <IconButton
+        size="small"
+        aria-label="Close"
+        title="Close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </>
+  );
+
+  const slotProps = {
+    transition: {
+      onExited: handleExited,
+    },
   };
 
   return (
-    <NotificationsContext.Provider value={{ showNotification }}>
-      {children}
-
-      <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        message={message}
-        open={open}
-        autoHideDuration={3000}
-        onClose={() => setOpen(false)}
-      >
-        {severity ? (
-          <Alert severity={severity} sx={{ width: "100%" }}>
+    <Snackbar
+      key={notificationKey}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      open={isOpen}
+      autoHideDuration={3000}
+      slotProps={slotProps}
+    >
+      <Badge badgeContent={badge} color="primary" sx={{ width: "100%" }}>
+        {options.severity ? (
+          <Alert
+            severity={options.severity}
+            sx={{ width: "100%" }}
+            action={action}
+          >
             {message}
           </Alert>
         ) : (
-          ""
+          <SnackbarContent message={message} action={action} />
         )}
-      </Snackbar>
-    </NotificationsContext.Provider>
+      </Badge>
+    </Snackbar>
+  );
+};
+
+interface NotificationsProps {
+  queue: Array<NotificationQueueItem>;
+}
+
+const Notifications = ({ queue }: NotificationsProps) => {
+  const currentNotification = queue[0] ?? null;
+  const badge = queue.length > 1 ? String(queue.length) : undefined;
+
+  return currentNotification ? (
+    <Notification {...currentNotification} badge={badge} />
+  ) : null;
+};
+
+export type ShowNotification = (
+  message: string,
+  options: ShowNotificationOptions,
+) => string;
+
+export type CloseNotification = (id: string) => void;
+
+export type RemoveNotification = (id: string) => void;
+
+export interface NotificationsProviderProps {
+  children?: ReactNode;
+}
+
+const NotificationsProvider = ({ children }: NotificationsProviderProps) => {
+  const [queue, setQueue] = useState<Array<NotificationQueueItem>>([]);
+
+  const show = useCallback<ShowNotification>(
+    (message: string, options: ShowNotificationOptions = {}) => {
+      const notificationKey = options.key ?? String(generateId());
+      setQueue((queue) => {
+        if (queue.some((n) => n.notificationKey === notificationKey)) {
+          return queue;
+        }
+
+        const notificationQueueItem: NotificationQueueItem = {
+          notificationKey: notificationKey,
+          message,
+          isOpen: true,
+          options,
+        };
+        return [...queue, notificationQueueItem];
+      });
+
+      return notificationKey;
+    },
+    [],
+  );
+
+  const close = useCallback<CloseNotification>((key: string) => {
+    setQueue((queue) =>
+      queue.map((n) =>
+        n.notificationKey === key ? { ...n, isOpen: false } : n,
+      ),
+    );
+  }, []);
+
+  const remove = useCallback<RemoveNotification>((key: string) => {
+    setQueue((queue) => queue.filter((n) => n.notificationKey !== key));
+  }, []);
+
+  const notificationsContext = useMemo(
+    () => ({ show, close, remove }),
+    [show, close, remove],
+  );
+
+  return (
+    <NotificationsContext value={notificationsContext}>
+      {children}
+      <Notifications queue={queue} />
+    </NotificationsContext>
   );
 };
 
