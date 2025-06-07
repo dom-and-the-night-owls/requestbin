@@ -81,7 +81,8 @@ const Notification = ({
       key={notificationKey}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
       open={isOpen}
-      autoHideDuration={3000}
+      autoHideDuration={options.autoHideDuration}
+      onClose={handleClose}
       slotProps={slotProps}
     >
       <Badge badgeContent={badge} color="primary" sx={{ width: "100%" }}>
