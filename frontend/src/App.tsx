@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import apiService from "./services/apiService.ts";
 import { handleAPIError, setErrorNotifier, removeBasket } from "./utils.ts";
 import useLocalStorageState from "./hooks/useLocalStorageState";
-import { useNotifications } from "@toolpad/core/useNotifications";
+import { useNotifications } from "./components/useNotifications";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
