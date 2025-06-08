@@ -40,6 +40,7 @@ const Basket = ({ originURL }: BasketProps) => {
     await navigator.clipboard.writeText(`${originURL}/hook/${basketName}`);
     notifications.show("Basket URL copied to clipboard", {
       key: "clipboard",
+      severity: "info",
       autoHideDuration: 2000,
     });
   };
@@ -49,6 +50,7 @@ const Basket = ({ originURL }: BasketProps) => {
 
     notifications.show("Formatted JSON", {
       key: "format",
+      severity: "info",
       autoHideDuration: 2000,
     });
   };
@@ -61,6 +63,7 @@ const Basket = ({ originURL }: BasketProps) => {
 
       notifications.show(`Deleted basket /${basketName}`, {
         key: "delete",
+        severity: "success",
         autoHideDuration: 2000,
       });
     } catch (error: unknown) {
@@ -75,6 +78,7 @@ const Basket = ({ originURL }: BasketProps) => {
 
     notifications.show(`Basket "${basketName}" successfully cleared.`, {
       key: "clear",
+      severity: "success",
       autoHideDuration: 2000,
     });
   };
@@ -84,6 +88,7 @@ const Basket = ({ originURL }: BasketProps) => {
 
     notifications.show(`Reversed list order`, {
       key: "reverse",
+      severity: "info",
       autoHideDuration: 2000,
     });
   };
