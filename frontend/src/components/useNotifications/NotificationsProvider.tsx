@@ -8,11 +8,10 @@ import Alert from "@mui/material/Alert";
 import Badge from "@mui/material/Badge";
 import { NotificationsContext } from "./NotificationsContext";
 
-let nextId = 0;
-const generateId = () => {
-  const id = nextId;
-  nextId += 1;
-  return id;
+const generateId = (() => {
+  let nextId = 0;
+  return () => nextId++;
+})();
 };
 
 export interface ShowNotificationOptions {
