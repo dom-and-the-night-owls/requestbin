@@ -1,6 +1,6 @@
 import axios from "axios";
 import { z } from "zod";
-import type { ShowNotification } from "./components/useNotifications";
+import type { ShowNotification } from "./hooks/useNotifications";
 
 export type NotificationFunction = (
   message: string,

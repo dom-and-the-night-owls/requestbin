@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { NotificationsProvider } from "./components/useNotifications";
+import { NotificationsProvider } from "./hooks/useNotifications";
 import App from "./App.tsx";
 
 // import fonts for mui theme

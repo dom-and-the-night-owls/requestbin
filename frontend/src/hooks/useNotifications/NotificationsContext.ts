@@ -3,7 +3,7 @@ import type {
   ShowNotification,
   CloseNotification,
   RemoveNotification,
-} from "./NotificationsProvider";
+} from "./useNotifications";
 
 export interface NotificationsContextValue {
   show: ShowNotification;
