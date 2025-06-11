@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useNotifications } from "@toolpad/core/useNotifications";
+import { useNotifications } from "../../hooks/useNotifications";
 import type { Request as RequestType } from "../../types";
 import apiService from "../../services/apiService";
 import { handleAPIError, removeBasket } from "../../utils";
@@ -21,6 +21,7 @@ import ClearAllIcon from "@mui/icons-material/ClearAll";
 import CodeIcon from "@mui/icons-material/Code";
 import CodeOffIcon from "@mui/icons-material/Code";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
+import PageNotFound from "../PageNotFound";
 
 interface BasketProps {
   originURL: string;
@@ -30,6 +31,7 @@ const Basket = ({ originURL }: BasketProps) => {
   const POLLING_INTERVAL = 1000; // poll every 1 second
   const basketName = useParams().basketName ?? "";
   const notifications = useNotifications();
+  const [notFound, setNotFound] = useState(false);
   const [requests, setRequests] = useState<Array<RequestType>>([]);
   const [deleteDialogState, setDeleteDialogState] = useState(false);
   const [showJSON, setShowJSON] = useState(false);
@@ -40,6 +42,7 @@ const Basket = ({ originURL }: BasketProps) => {
     await navigator.clipboard.writeText(`${originURL}/hook/${basketName}`);
     notifications.show("Basket URL copied to clipboard", {
       key: "clipboard",
+      severity: "info",
       autoHideDuration: 2000,
     });
   };
@@ -49,6 +52,7 @@ const Basket = ({ originURL }: BasketProps) => {
 
     notifications.show("Formatted JSON", {
       key: "format",
+      severity: "info",
       autoHideDuration: 2000,
     });
   };
@@ -61,6 +65,7 @@ const Basket = ({ originURL }: BasketProps) => {
 
       notifications.show(`Deleted basket /${basketName}`, {
         key: "delete",
+        severity: "success",
         autoHideDuration: 2000,
       });
     } catch (error: unknown) {
@@ -75,6 +80,7 @@ const Basket = ({ originURL }: BasketProps) => {
 
     notifications.show(`Basket "${basketName}" successfully cleared.`, {
       key: "clear",
+      severity: "success",
       autoHideDuration: 2000,
     });
   };
@@ -84,6 +90,7 @@ const Basket = ({ originURL }: BasketProps) => {
 
     notifications.show(`Reversed list order`, {
       key: "reverse",
+      severity: "info",
       autoHideDuration: 2000,
     });
   };
@@ -95,6 +102,7 @@ const Basket = ({ originURL }: BasketProps) => {
         setRequests(reverse ? requests.toReversed() : requests);
       } catch (error: unknown) {
         handleAPIError(error);
+        setNotFound(true);
       }
     };
 
@@ -103,6 +111,10 @@ const Basket = ({ originURL }: BasketProps) => {
 
     return () => clearInterval(intervalId);
   }, [basketName, reverse]);
+
+  if (notFound) {
+    return <PageNotFound />;
+  }
 
   return (
     <Paper

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import apiService from "../../services/apiService";
 import { handleAPIError, addBasket } from "../../utils";
 import { Paper, Typography, Stack, TextField, Button } from "@mui/material";
-import { useNotifications } from "@toolpad/core/useNotifications";
+import { useNotifications } from "../../hooks/useNotifications";
 
 interface CreateBasketProps {
   originURL: string;

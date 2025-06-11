@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { NotificationsProvider } from "@toolpad/core/useNotifications";
+import { NotificationsProvider } from "./hooks/useNotifications";
 import App from "./App.tsx";
 
 // import fonts for mui theme
@@ -13,13 +13,7 @@ import "@fontsource/roboto/700.css";
 // in order to use useNotifications in App.tsx
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <NotificationsProvider
-      slotProps={{
-        snackbar: {
-          anchorOrigin: { vertical: "top", horizontal: "center" },
-        },
-      }}
-    >
+    <NotificationsProvider>
       <App />
     </NotificationsProvider>
   </StrictMode>,
