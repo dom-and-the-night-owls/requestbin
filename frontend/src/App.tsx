@@ -16,6 +16,7 @@ import Basket from "./components/Basket";
 import MyBaskets from "./components/MyBaskets";
 import CreateBasket from "./components/CreateBasket";
 import MyBasketsFab from "./components/MyBasketsFab";
+import PageNotFound from "./components/PageNotFound";
 
 function App() {
   const localBaskets = useLocalStorageState();
@@ -89,6 +90,7 @@ function App() {
                     element={<Basket originURL={originURL} />}
                   />
                 </Route>
+                <Route path="*" element={<PageNotFound />} />
               </Routes>
 
               <MyBaskets

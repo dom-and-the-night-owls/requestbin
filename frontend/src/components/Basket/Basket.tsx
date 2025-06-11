@@ -21,6 +21,7 @@ import ClearAllIcon from "@mui/icons-material/ClearAll";
 import CodeIcon from "@mui/icons-material/Code";
 import CodeOffIcon from "@mui/icons-material/Code";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
+import PageNotFound from "../PageNotFound";
 
 interface BasketProps {
   originURL: string;
@@ -30,6 +31,7 @@ const Basket = ({ originURL }: BasketProps) => {
   const POLLING_INTERVAL = 1000; // poll every 1 second
   const basketName = useParams().basketName ?? "";
   const notifications = useNotifications();
+  const [notFound, setNotFound] = useState(false);
   const [requests, setRequests] = useState<Array<RequestType>>([]);
   const [deleteDialogState, setDeleteDialogState] = useState(false);
   const [showJSON, setShowJSON] = useState(false);
@@ -100,6 +102,7 @@ const Basket = ({ originURL }: BasketProps) => {
         setRequests(reverse ? requests.toReversed() : requests);
       } catch (error: unknown) {
         handleAPIError(error);
+        setNotFound(true);
       }
     };
 
@@ -108,6 +111,10 @@ const Basket = ({ originURL }: BasketProps) => {
 
     return () => clearInterval(intervalId);
   }, [basketName, reverse]);
+
+  if (notFound) {
+    return <PageNotFound />;
+  }
 
   return (
     <Paper
